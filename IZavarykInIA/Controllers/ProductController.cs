@@ -31,33 +31,31 @@ namespace IZavarykInIA.Controllers
         public IActionResult Upsert(int? id)
         {
             // Список для выбора категории
-            IEnumerable<SelectListItem> CategoryDropDown = _db.Category.Select(
-                item => new SelectListItem()
+            ProductViewModel viewModel = new ProductViewModel()
+            {
+                Product = new(),
+                CategorySelectList = _db.Category.Select(item => new SelectListItem
                 {
                     Text = item.Title,
-                    Value = item.Description,
-                });
+                    Value = item.Id.ToString()
+                })
+            };
 
-            ViewBag.CategoryDropDown = CategoryDropDown;
 
-
-            // Создаем новый экземпляр типа Product
-            Product product = new();
-            // Если идентификатор пуст, то возвращаем представление
-            // с товарами
             if (id == null)
             {
-                return View(product);
+                return View(viewModel);
             }
             else
             {
                 // Обновляем выбранную позицию товара
-                product = _db.Product.Find(id);
-                if (product == null)
+                viewModel.Product = _db.Product.Find(id);
+                if (viewModel.Product == null)
                     return NotFound();
 
-                return View(product);
+                return View(viewModel);
             }
+
         }
     }
 }
